@@ -6,17 +6,13 @@ import java.util.Map;
 
 public class RoomChat extends UnicastRemoteObject implements IRoomChat
 {
-    protected RoomChat() throws RemoteException
+    private Map<String, IUserChat> userList;
+    private String name;
+
+    protected RoomChat(String name) throws RemoteException
     {
         super();
-    }
-
-    private Map<String, IUserChat> userList;
-    private String roomName;
-
-    public void setRoomName(String name)
-    {
-        roomName = name;
+        this.name = name;
     }
 
     @Override
@@ -45,7 +41,7 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
     @Override
     public String getRoomName() throws RemoteException
     {
-        return roomName;
+        return name;
     }
 
     @Override

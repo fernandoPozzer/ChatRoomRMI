@@ -46,9 +46,9 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
 
         try
         {
-            RoomChat room = new RoomChat();
-            room.setRoomName(roomName);
+            RoomChat room = new RoomChat(roomName);
             roomList.put(roomName, room);
+            
             Naming.rebind("rmi://localhost:2020/" + roomName, room);
         }
         catch(Exception e)
