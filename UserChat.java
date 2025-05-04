@@ -8,15 +8,15 @@ import java.util.Scanner;
 
 public class UserChat extends UnicastRemoteObject implements IUserChat
 {
+    private String name;
+    private static UserChat userChat;
+    //private static RoomChat room = null;
+
     protected UserChat(String name) throws RemoteException
     {
         super();
         this.name = name;
     }
-
-    private static String name;
-    private static UserChat userChat;
-    //private static RoomChat room = null;
 
     @Override
     public void deliverMsg(String senderName, String msg) throws RemoteException
@@ -30,7 +30,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
 
         System.out.print("Digite seu nome: ");
         String line = scanner.nextLine();
-        name = line;
+        String nameUser = line;
 
         String serverIP = "localhost";
         String serverPort = "2020";
@@ -53,13 +53,13 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
             System.out.println("Room to enter: " + roomToEnter);
 
             IRoomChat room = (IRoomChat) Naming.lookup("rmi://localhost:2020/" + roomToEnter);
-            userChat = new UserChat(name);
-            room.joinRoom(name, userChat);
+            userChat = new UserChat(nameUser);
+            room.joinRoom(nameUser, userChat);
             
-            room.sendMsg(name, "Ola mundo");
+            room.sendMsg(nameUser, "Ola mundo");
 
-        
-          
+            line = scanner.nextLine();
+            room.leaveRoom(nameUser);
         }
         catch(Exception e)
         {

@@ -48,8 +48,21 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
         {
             RoomChat room = new RoomChat(roomName);
             roomList.put(roomName, room);
-            
+
             Naming.rebind("rmi://localhost:2020/" + roomName, room);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void closeRooom(String roomName)
+    {
+        IRoomChat room = roomList.get(roomName);
+        try
+        {
+            room.closeRoom();
         }
         catch(Exception e)
         {
@@ -68,6 +81,13 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
             Naming.rebind("rmi://localhost:2020/Servidor", server);
 
             System.out.println("Servidor no ar.");
+
+            Scanner scanner = new Scanner(System.in);
+
+            scanner.nextLine();
+            server.closeRooom("SALA-TESTE");
+            
+
         }
         catch(Exception e)
         {
