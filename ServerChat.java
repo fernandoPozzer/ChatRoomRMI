@@ -60,9 +60,11 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
     private void closeRooom(String roomName)
     {
         IRoomChat room = roomList.get(roomName);
+
         try
         {
             room.closeRoom();
+            roomList.remove(roomName);
         }
         catch(Exception e)
         {
