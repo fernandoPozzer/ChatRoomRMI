@@ -1,7 +1,9 @@
 package ChatRoomRMI;
 
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RoomChat extends UnicastRemoteObject implements IRoomChat
@@ -12,7 +14,9 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
     protected RoomChat(String name) throws RemoteException
     {
         super();
+
         this.name = name;
+        userList = new HashMap<>();
     }
 
     @Override

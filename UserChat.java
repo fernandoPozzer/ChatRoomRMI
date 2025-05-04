@@ -8,12 +8,14 @@ import java.util.Scanner;
 
 public class UserChat extends UnicastRemoteObject implements IUserChat
 {
-    protected UserChat() throws RemoteException
+    protected UserChat(String name) throws RemoteException
     {
         super();
+        this.name = name;
     }
 
     private static String name;
+    private static UserChat userChat;
     //private static RoomChat room = null;
 
     @Override
@@ -45,6 +47,16 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
             System.out.println("Criando sala...");
             server.createRoom("SALA-TESTE");
             System.out.println(server.getRooms());
+
+            String roomToEnter = server.getRooms().get(0);
+
+            System.out.println("Room to enter: " + roomToEnter);
+
+            IRoomChat room = (IRoomChat) Naming.lookup("rmi://localhost:2020/" + roomToEnter);
+            userChat = new UserChat(name);
+            room.joinRoom(name, userChat);
+            
+            room.sendMsg(name, "Ola mundo");
 
         
           
