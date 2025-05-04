@@ -3,6 +3,7 @@ package ChatRoomRMI;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
         userList = new HashMap<>();
     }
 
+
     @Override
     public void sendMsg(String usrName, String msg) throws RemoteException
     {
@@ -32,14 +34,14 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
     public void joinRoom(String userName, IUserChat user) throws RemoteException
     {
         userList.put(userName, user);
-        sendMsg("Servidor", userName + " entrou na sala.");
+        sendMsg("SERVER", userName + " entrou na sala.");
     }
 
     @Override
     public void leaveRoom(String usrName) throws RemoteException
     {
         userList.remove(usrName);
-        sendMsg("Servidor", usrName + " saiu da sala.");
+        sendMsg("SERVER", usrName + " saiu da sala.");
     }
 
     @Override
@@ -51,7 +53,10 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
     @Override
     public void closeRoom() throws RemoteException
     {
-        sendMsg("Servidor", "Sala fechada pelo servidor.");
-        userList.clear();
-    }    
+        throw new UnsupportedOperationException("Unimplemented method 'closeRoom'");
+    }
+    @Override
+    public ArrayList<String> getUserList() throws RemoteException {
+        return new ArrayList<>(userList.keySet()); // Retorna lista de nomes
+    }
 }

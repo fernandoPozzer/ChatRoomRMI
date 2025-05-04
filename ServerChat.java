@@ -24,9 +24,6 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
     public ArrayList<String> getRooms() throws RemoteException
     {
         ArrayList<String> roomNames = new ArrayList<String>();
-
-        // roomNames.add("SALA-TESTE");
-
         for (String s : roomList.keySet())
         {
             roomNames.add(s);
@@ -43,28 +40,12 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
             // Servidor ja tem sala com esse nome
             return;
         }
-
         try
         {
             RoomChat room = new RoomChat(roomName);
             roomList.put(roomName, room);
-
+            
             Naming.rebind("rmi://localhost:2020/" + roomName, room);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void closeRooom(String roomName)
-    {
-        IRoomChat room = roomList.get(roomName);
-
-        try
-        {
-            room.closeRoom();
-            roomList.remove(roomName);
         }
         catch(Exception e)
         {
@@ -78,18 +59,9 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
         {
             System.out.println("Iniciando...");
             ServerChat server = new ServerChat();
-
             LocateRegistry.createRegistry(2020);
             Naming.rebind("rmi://localhost:2020/Servidor", server);
-
             System.out.println("Servidor no ar.");
-
-            Scanner scanner = new Scanner(System.in);
-
-            scanner.nextLine();
-            server.closeRooom("SALA-TESTE");
-            
-
         }
         catch(Exception e)
         {

@@ -1,6 +1,7 @@
 package ChatRoomRMI;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public interface IRoomChat extends java.rmi.Remote
 {
@@ -9,4 +10,6 @@ public interface IRoomChat extends java.rmi.Remote
     public void leaveRoom(String usrName) throws RemoteException;
     public String getRoomName() throws RemoteException;
     public void closeRoom() throws RemoteException;
+    public ArrayList<String> getUserList() throws RemoteException;
+
 }
