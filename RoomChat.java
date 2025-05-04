@@ -1,33 +1,55 @@
 package ChatRoomRMI;
 
-public class RoomChat implements IRoomChat
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.Map;
+
+public class RoomChat extends UnicastRemoteObject implements IRoomChat
 {
-    @Override
-    public void sendMsg(String usrName, String msg)
+    protected RoomChat() throws RemoteException
     {
-        throw new UnsupportedOperationException("Unimplemented method 'sendMsg'");
+        super();
+    }
+
+    private Map<String, IUserChat> userList;
+    private String roomName;
+
+    public void setRoomName(String name)
+    {
+        roomName = name;
     }
 
     @Override
-    public void joinRoom(String userName, IUserChat user)
+    public void sendMsg(String usrName, String msg) throws RemoteException
     {
-        throw new UnsupportedOperationException("Unimplemented method 'joinRoom'");
+        for (IUserChat user : userList.values())
+        {
+            user.deliverMsg(usrName, msg);
+        }
     }
 
     @Override
-    public void leaveRoom(String usrName)
+    public void joinRoom(String userName, IUserChat user) throws RemoteException
     {
-        throw new UnsupportedOperationException("Unimplemented method 'leaveRoom'");
+        userList.put(userName, user);
+        sendMsg("SERVER", userName + " entrou na sala.");
     }
 
     @Override
-    public String getRoomName()
+    public void leaveRoom(String usrName) throws RemoteException
     {
-        throw new UnsupportedOperationException("Unimplemented method 'getRoomName'");
+        userList.remove(usrName);
+        sendMsg("SERVER", usrName + " saiu da sala.");
     }
 
     @Override
-    public void closeRoom()
+    public String getRoomName() throws RemoteException
+    {
+        return roomName;
+    }
+
+    @Override
+    public void closeRoom() throws RemoteException
     {
         throw new UnsupportedOperationException("Unimplemented method 'closeRoom'");
     }    
