@@ -20,7 +20,6 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
         userList = new HashMap<>();
     }
 
-
     @Override
     public void sendMsg(String usrName, String msg) throws RemoteException
     {
@@ -34,14 +33,14 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
     public void joinRoom(String userName, IUserChat user) throws RemoteException
     {
         userList.put(userName, user);
-        sendMsg("SERVER", userName + " entrou na sala.");
+        sendMsg("Servidor", userName + " entrou na sala.");
     }
 
     @Override
     public void leaveRoom(String usrName) throws RemoteException
     {
         userList.remove(usrName);
-        sendMsg("SERVER", usrName + " saiu da sala.");
+        sendMsg("Servidor", usrName + " saiu da sala.");
     }
 
     @Override
@@ -51,14 +50,13 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat
     }
 
     @Override
-    public void closeRoom() throws RemoteException {
-        if (!userList.isEmpty()) {
-            sendMsg("SERVER", "Sala fechada pelo servidor.");
+    public void closeRoom() throws RemoteException
+    {
+        if (!userList.isEmpty())
+        {
+            sendMsg("Servidor", "Sala fechada pelo servidor.");
         }
+
         userList.clear();
-    }
-    @Override
-    public ArrayList<String> getUserList() throws RemoteException {
-        return new ArrayList<>(userList.keySet()); // Retorna lista de nomes
     }
 }

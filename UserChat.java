@@ -26,8 +26,6 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
     private static UserChat userChat;
     private static String serverIP;
 
-    private static String serverIP;
-
     private IRoomChat currentRoom;
     private JFrame frame;
     private JTextArea messageArea;
@@ -48,38 +46,29 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         }
     }
 
-
     private void initGUI(IServerChat server)
-   
     {
         frame = new JFrame("Chat - " + name);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
-
         JPanel panel = new JPanel(new BorderLayout());
         messageArea = new JTextArea();
         messageArea.setEditable(false);
-
         JScrollPane scrollPane = new JScrollPane(messageArea);
         panel.add(scrollPane, BorderLayout.CENTER);
         JPanel bottomPanel = new JPanel(new BorderLayout());
         roomComboBox = new JComboBox<>();
-        
         try
-       
         {
             ArrayList<String> rooms = server.getRooms();
             for (String room : rooms) {
                 roomComboBox.addItem(room);
             }
         }
-       
         catch (RemoteException e)
-       
         {
             e.printStackTrace();
         }
-
         bottomPanel.add(roomComboBox, BorderLayout.NORTH);
         inputField = new JTextField();
         bottomPanel.add(inputField, BorderLayout.CENTER);
@@ -88,7 +77,6 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         joinButton = new JButton("Entrar");
         leaveButton = new JButton("Sair");
         sendButton = new JButton("Enviar");
-
         createRoomButton = new JButton("Criar Sala");
 
         createRoomButton.addActionListener(e -> {
@@ -122,22 +110,16 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
 
         joinButton.addActionListener(e -> {
             try
-           
             {
                 String roomName = (String) roomComboBox.getSelectedItem();
                 if (roomName != null)
-               
                 {
                     messageArea.setText("");
 
-
                     if (currentRoom != null)
-                   
                     {
                         currentRoom.leaveRoom(name);
                     }
-
-                    currentRoom = (IRoomChat) Naming.lookup("rmi://" + serverIP + ":2020/" + roomName);
 
                     currentRoom = (IRoomChat) Naming.lookup("rmi://" + serverIP + ":2020/" + roomName);
                     currentRoom.joinRoom(name, this);
@@ -164,7 +146,6 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
             }
         });
 
-
         sendButton.addActionListener(e -> {
             try {
                 if (currentRoom != null) {
@@ -176,7 +157,6 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
                 ex.printStackTrace();
             }
         });
-
 
         leaveButton.addActionListener(e -> {
             try {
@@ -203,13 +183,11 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
 
     public static void main(String[] args)
     {
-    public static void main(String[] args)
-    {
         String userName = JOptionPane.showInputDialog(
-            null,
-            "Digite seu nome:",
-            "Entrada no Chat",
-            JOptionPane.PLAIN_MESSAGE
+                null,
+                "Digite seu nome:",
+                "Entrada no Chat",
+                JOptionPane.PLAIN_MESSAGE
         );
 
         serverIP = JOptionPane.showInputDialog(
