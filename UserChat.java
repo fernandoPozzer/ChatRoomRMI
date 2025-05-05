@@ -107,8 +107,8 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
                     } catch (RemoteException re) {
                         re.printStackTrace();
                     }
+                    
                     messageArea.append("[Sistema] Você entrou na sala: " + roomName + "\n");
-                    messageArea.append("[Sistema] Membros atuais: " + currentRoom.getUserList() + "\n"); // Se implementar
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
