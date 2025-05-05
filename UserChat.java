@@ -22,6 +22,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
     }
 
     private static String name;
+    private static IServerChat server;
     private static UserChat userChat;
     private static String serverIP;
 
@@ -30,7 +31,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
     private JTextArea messageArea;
     private JTextField inputField;
     private JComboBox<String> roomComboBox;
-    private JButton joinButton, leaveButton, sendButton;
+    private JButton joinButton, leaveButton, sendButton, createRoomButton;
 
     @Override
     public void deliverMsg(String senderName, String msg) throws RemoteException
@@ -75,10 +76,35 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         bottomPanel.add(roomComboBox, BorderLayout.NORTH);
         inputField = new JTextField();
         bottomPanel.add(inputField, BorderLayout.CENTER);
+
         JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
         joinButton = new JButton("Entrar");
         leaveButton = new JButton("Sair");
         sendButton = new JButton("Enviar");
+        createRoomButton = new JButton("Criar Sala");
+
+        createRoomButton.addActionListener(e -> {
+            String newRoomName = JOptionPane.showInputDialog(
+                null,
+                "Digite o nome da sala:",
+                "Crie uma sala",
+                JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (newRoomName == null)
+            {
+                return;
+            }
+
+            try
+            {
+                server.createRoom(newRoomName);
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        });
 
         joinButton.addActionListener(e -> {
             try
@@ -107,7 +133,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
                     } catch (RemoteException re) {
                         re.printStackTrace();
                     }
-                    
+
                     messageArea.append("[Sistema] Você entrou na sala: " + roomName + "\n");
                 }
             } catch (Exception ex) {
@@ -145,6 +171,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         buttonPanel.add(joinButton);
         buttonPanel.add(leaveButton);
         buttonPanel.add(sendButton);
+        buttonPanel.add(createRoomButton);
         bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         panel.add(bottomPanel, BorderLayout.SOUTH);
@@ -180,8 +207,8 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
 
         try
         {
-            IServerChat server = (IServerChat) Naming.lookup("rmi://" + serverIP + ":2020/Servidor");
-            server.createRoom("SALA-TESTE");
+            server = (IServerChat) Naming.lookup("rmi://" + serverIP + ":2020/Servidor");
+            //server.createRoom("SALA-TESTE");
             UserChat userChat = new UserChat(userName);
 
             SwingUtilities.invokeLater(() -> {
