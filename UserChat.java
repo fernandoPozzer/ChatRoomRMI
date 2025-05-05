@@ -145,7 +145,21 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
                 "Entrada no Chat",
                 JOptionPane.PLAIN_MESSAGE
         );
-        if (userName == null || userName.trim().isEmpty()) {
+
+        serverIP = JOptionPane.showInputDialog(
+                null,
+                "Digite o IP do Servidor:",
+                "Entrada no Chat",
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (userName == null || userName.trim().isEmpty())
+        {
+            System.exit(0);
+        }
+
+        if (serverIP == null || serverIP.trim().isEmpty())
+        {
             System.exit(0);
         }
 
