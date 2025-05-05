@@ -51,16 +51,13 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         frame = new JFrame("Chat - " + name);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
-
         JPanel panel = new JPanel(new BorderLayout());
         messageArea = new JTextArea();
         messageArea.setEditable(false);
-
         JScrollPane scrollPane = new JScrollPane(messageArea);
         panel.add(scrollPane, BorderLayout.CENTER);
         JPanel bottomPanel = new JPanel(new BorderLayout());
         roomComboBox = new JComboBox<>();
-        
         try
         {
             ArrayList<String> rooms = server.getRooms();
@@ -72,7 +69,6 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         {
             e.printStackTrace();
         }
-
         bottomPanel.add(roomComboBox, BorderLayout.NORTH);
         inputField = new JTextField();
         bottomPanel.add(inputField, BorderLayout.CENTER);
@@ -85,24 +81,30 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
 
         createRoomButton.addActionListener(e -> {
             String newRoomName = JOptionPane.showInputDialog(
-                null,
-                "Digite o nome da sala:",
-                "Crie uma sala",
-                JOptionPane.PLAIN_MESSAGE
+                    null,
+                    "Digite o nome da sala:",
+                    "Crie uma sala",
+                    JOptionPane.PLAIN_MESSAGE
             );
 
-            if (newRoomName == null)
-            {
+            if (newRoomName == null || newRoomName.trim().isEmpty()) {
                 return;
             }
 
-            try
-            {
+            try {
                 server.createRoom(newRoomName);
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
+                ArrayList<String> rooms = server.getRooms();
+                SwingUtilities.invokeLater(() -> {
+                    roomComboBox.removeAllItems();
+                    for (String room : rooms) {
+                        roomComboBox.addItem(room);
+                    }
+                    roomComboBox.setSelectedItem(newRoomName);
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame,
+                        "Erro ao criar sala: " + ex.getMessage(),
+                        "Erro", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -182,10 +184,10 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
     public static void main(String[] args)
     {
         String userName = JOptionPane.showInputDialog(
-            null,
-            "Digite seu nome:",
-            "Entrada no Chat",
-            JOptionPane.PLAIN_MESSAGE
+                null,
+                "Digite seu nome:",
+                "Entrada no Chat",
+                JOptionPane.PLAIN_MESSAGE
         );
 
         serverIP = JOptionPane.showInputDialog(
