@@ -33,7 +33,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
     private JTextArea messageArea;
     private JTextField inputField;
     private JComboBox<String> roomComboBox;
-    private JButton joinButton, leaveButton, sendButton, createRoomButton;
+    private JButton joinButton, leaveButton, sendButton, createRoomButton, refreshRoomListButton;
 
     @Override
     public void deliverMsg(String senderName, String msg) throws RemoteException
@@ -48,7 +48,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         }
     }
 
-    private void updateRoomList(String selectedRoom)
+    private void updateRoomList(String selectedRoom, boolean shouldSetSelected)
     {
         try
         {
@@ -56,10 +56,16 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         
             SwingUtilities.invokeLater(() -> {
                 roomComboBox.removeAllItems();
-                for (String room : rooms) {
+
+                for (String room : rooms)
+                {
                     roomComboBox.addItem(room);
                 }
-                roomComboBox.setSelectedItem(selectedRoom);
+                
+                if (shouldSetSelected)
+                {
+                    roomComboBox.setSelectedItem(selectedRoom);
+                }
             });
         }
         catch(Exception e)
@@ -83,6 +89,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         JPanel bottomPanel = new JPanel(new BorderLayout());
 
         roomComboBox = new JComboBox<>();
+
         try
         {
             ArrayList<String> rooms = server.getRooms();
@@ -104,6 +111,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         leaveButton = new JButton("Sair");
         sendButton = new JButton("Enviar");
         createRoomButton = new JButton("Criar Sala");
+        refreshRoomListButton = new JButton("Recarregar Salas");
 
         createRoomButton.addActionListener(e -> {
             String newRoomName = JOptionPane.showInputDialog(
@@ -120,7 +128,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
             try
             {
                 server.createRoom(newRoomName);
-                updateRoomList(newRoomName);
+                updateRoomList(newRoomName, true);
             }
             catch (Exception ex)
             {
@@ -147,7 +155,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
                     currentRoom = (IRoomChat) Naming.lookup("rmi://" + serverIP + ":2020/" + roomName);
                     currentRoom.joinRoom(name, userChat);
 
-                    updateRoomList(roomName);
+                    updateRoomList(roomName, true);
                     messageArea.append("Você entrou na sala: " + roomName + "\n");
                 }
             }
@@ -184,10 +192,30 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
             }
         });
 
+        refreshRoomListButton.addActionListener(e -> {
+            try
+            {
+                if (currentRoom != null)
+                {
+                    updateRoomList(currentRoom.getRoomName(), true);
+                }
+                else
+                {
+                    updateRoomList("", false);
+                }
+            }
+            catch(Exception ex)
+            {
+                ex.printStackTrace();
+            }
+            
+        });
+
         buttonPanel.add(joinButton);
         buttonPanel.add(leaveButton);
         buttonPanel.add(sendButton);
         buttonPanel.add(createRoomButton);
+        buttonPanel.add(refreshRoomListButton);
         bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         panel.add(bottomPanel, BorderLayout.SOUTH);
@@ -224,7 +252,6 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
         try
         {
             server = (IServerChat) Naming.lookup("rmi://" + serverIP + ":2020/Servidor");
-            //server.createRoom("SALA-TESTE");
             userChat = new UserChat(userName);
 
             SwingUtilities.invokeLater(() -> {
