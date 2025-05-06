@@ -62,9 +62,11 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat
             try
             {
                 IRoomChat room = roomList.get(selectedRoom);
-                room.closeRoom();
+
                 roomList.remove(selectedRoom);
                 updateRoomList();
+                room.closeRoom();
+                
                 log("Sala fechada: " + selectedRoom);
             }
             catch (RemoteException ex)

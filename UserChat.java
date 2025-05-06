@@ -38,13 +38,19 @@ public class UserChat extends UnicastRemoteObject implements IUserChat
     @Override
     public void deliverMsg(String senderName, String msg) throws RemoteException
     {
-        if(messageArea != null) {
-            System.out.println(" - " + senderName + ": " + msg);
+        if(messageArea != null)
+        {
             SwingUtilities.invokeLater(() -> {
                 messageArea.append(senderName + ": " + msg + "\n");
 
                 messageArea.setCaretPosition(messageArea.getDocument().getLength());
             });
+        }
+
+        if (msg.equals("Sala fechada pelo servidor."))
+        {
+            currentRoom = null;
+            updateRoomList("", false);
         }
     }
 
